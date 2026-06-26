@@ -1305,7 +1305,7 @@
     function hideChart() {
       mainSections.forEach(el => el.style.display = '');
       document.getElementById('page-chart').style.display = 'none';
-      document.getElementById('dietary-fiber').scrollIntoView({ behavior: 'smooth' });
+      window.scrollTo(0, 0);
     }
 
     
