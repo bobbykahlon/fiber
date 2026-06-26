@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiber & Your Health</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest:  #1A4A3A;
+      --sage:    #7BA898;
+      --sage-lt: #D4E8E2;
+      --cream:   #F7F4EF;
+      --amber:   #C8861A;
+      --amber-lt:#FDF3E0;
+      --ink:     #1C1C1C;
+      --mid:     #4A4A4A;
+      --muted:   #7A7A7A;
+      --border:  #DDD8D0;
+      --white:   #FFFFFF;
+
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans:  'Inter', system-ui, sans-serif;
+
+      --max: 720px;
+      --pad: clamp(1rem, 5vw, 2.5rem);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--ink);
+      background: var(--white);
+    }
+
+    /* ── Progress bar ── */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: var(--sage);
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      z-index: 900;
+      padding: 0 var(--pad);
+    }
+    nav .nav-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      gap: 1rem;
+    }
+    nav .site-name {
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      color: var(--forest);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    nav ul {
+      display: flex;
+      gap: 0.5rem;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    nav ul a {
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--mid);
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 0.35rem 0.75rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--white);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    nav ul a:hover {
+      background: var(--forest);
+      color: var(--white);
+      border-color: var(--forest);
+    }
+
+    @media (max-width: 700px) {
+      nav ul { display: none; }
+    }
+
+    /* ── Sections ── */
+    section {
+      padding: clamp(3rem, 8vw, 5rem) var(--pad);
+    }
+    section.alt { background: var(--cream); }
+
+    .inner {
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+
+    /* ── Typography ── */
+    .eyebrow {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sage);
+      margin-bottom: 0.6rem;
+    }
+
+    h1, h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      color: var(--forest);
+      line-height: 1.2;
+    }
+    h1 { font-size: clamp(2.2rem, 6vw, 3.2rem); margin-bottom: 1.25rem; }
+    h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); margin-bottom: 1rem; }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--forest);
+      margin-bottom: 0.4rem;
+    }
+
+    p { color: var(--mid); margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    strong { color: var(--ink); font-weight: 600; }
+
+    /* ── Hero ── */
+    #hero {
+      background: var(--forest);
+      padding: clamp(2rem, 5vw, 3.5rem) var(--pad);
+    }
+    #hero .inner { max-width: var(--max); margin: 0 auto; }
+    #hero .eyebrow { color: var(--sage); }
+    #hero h1 { color: var(--white); margin-bottom: 1rem; }
+    #hero .subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      color: var(--sage-lt);
+      max-width: 540px;
+      margin-bottom: 2.5rem;
+      line-height: 1.65;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .stat-num {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 7vw, 3.5rem);
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.82rem;
+      color: var(--sage-lt);
+      max-width: 160px;
+      line-height: 1.4;
+    }
+
+    .hero-divider {
+      width: 48px;
+      height: 2px;
+      background: var(--sage);
+      margin: 2rem 0;
+    }
+
+    /* ── Benefit list ── */
+    .benefit-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-top: 0.5rem;
+    }
+    .pill {
+      color: var(--sage-lt);
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      font-weight: 300;
+      line-height: 1.65;
+    }
+    .pill + .pill::before {
+      content: '/';
+      margin: 0 0.6rem;
+      color: var(--sage);
+      font-weight: 300;
+    }
+
+    /* ── Fiber type comparison ── */
+    .fiber-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 520px) { .fiber-compare { grid-template-columns: 1fr; } }
+
+    .fiber-card {
+      border-radius: 8px;
+      padding: 1.4rem;
+    }
+    .fiber-card.gel {
+      background: var(--forest);
+      color: var(--white);
+    }
+    .fiber-card.non-gel {
+      background: var(--cream);
+      border: 1px solid var(--border);
+    }
+    .fiber-card h3 { margin-bottom: 0.75rem; }
+    .fiber-card.gel h3 { color: var(--sage-lt); }
+    .fiber-card.non-gel h3 { color: var(--mid); }
+    .fiber-card ul {
+      padding-left: 1.1rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .fiber-card.gel ul { color: var(--sage-lt); }
+    .fiber-card.non-gel ul { color: var(--muted); }
+    .fiber-card .verdict {
+      margin-top: 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .fiber-card.gel .verdict { color: var(--sage); }
+    .fiber-card.non-gel .verdict { color: var(--muted); }
+
+    /* ── How it works ── */
+    .mechanism-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .mechanism-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .mech-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--sage-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .mech-text h3 { margin-bottom: 0.2rem; }
+    .mech-text p { font-size: 0.92rem; margin: 0; }
+
+    /* ── Dosing steps ── */
+    .dose-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .dose-step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .dose-step:last-child { border-bottom: none; }
+    .dose-week {
+      background: var(--forest);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 0.5rem;
+      font-family: var(--serif);
+      font-size: 0.78rem;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .dose-week .wnum {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .dose-body {
+      padding: 0.9rem 1.1rem;
+      background: var(--white);
+    }
+    .dose-body h3 { font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .dose-body p { font-size: 0.88rem; margin: 0; }
+    .dose-target {
+      background: var(--amber-lt);
+    }
+    .dose-target .dose-week { background: var(--amber); }
+
+    /* ── Side effects ── */
+    .callout {
+      background: var(--amber-lt);
+      border-left: 3px solid var(--amber);
+      border-radius: 0 8px 8px 0;
+      padding: 1.1rem 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .callout p { font-size: 0.92rem; color: var(--ink); margin: 0; }
+    .callout strong { color: var(--amber); }
+
+    /* ── Formulations table ── */
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    thead th {
+      background: var(--forest);
+      color: var(--white);
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 0.75rem 1rem; vertical-align: top; color: var(--mid); }
+    tbody tr:nth-child(even) td { background: var(--cream); }
+    .tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .tag.best { background: var(--sage-lt); color: var(--forest); }
+    .tag.caution { background: var(--amber-lt); color: var(--amber); }
+    .tag.avoid { background: #FDE8E8; color: #B83232; }
+
+    /* ── Drug interactions ── */
+    .drug-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .drug-item {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .drug-item:last-child { border-bottom: none; }
+    .drug-name {
+      background: var(--cream);
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--forest);
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+    .drug-detail {
+      padding: 0.75rem 1rem;
+      font-size: 0.88rem;
+      color: var(--mid);
+    }
+    @media (max-width: 480px) {
+      .drug-item { flex-direction: column; }
+      .drug-name { min-width: unset; }
+    }
+
+    /* ── FAQ accordion ── */
+    .faq-list {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 1rem 1.1rem;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      line-height: 1.4;
+    }
+    .faq-q:hover { background: var(--cream); }
+    .faq-q .chevron {
+      font-size: 0.7rem;
+      color: var(--sage);
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+    .faq-q[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .faq-a {
+      display: none;
+      padding: 0 1.1rem 1rem;
+      font-size: 0.92rem;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+    .faq-a.open { display: block; }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      background: var(--forest);
+      padding: clamp(2rem, 6vw, 3.5rem) var(--pad);
+    }
+    .disclaimer .inner { max-width: var(--max); margin: 0 auto; }
+    .disclaimer p {
+      font-size: 0.82rem;
+      color: var(--sage-lt);
+      line-height: 1.65;
+      margin-bottom: 0.5rem;
+    }
+    .disclaimer .dis-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 1.5rem var(--pad);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    footer p { font-size: 0.78rem; color: var(--muted); margin: 0; }
+
+    /* ── Print ── */
+    .print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--sage-lt);
+      color: var(--forest);
+      border: none;
+      border-radius: 5px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .print-btn:hover { background: var(--sage); color: var(--white); }
+
+    @media print {
+      #progress-bar, nav, .print-btn { display: none; }
+      section { padding: 1.5rem 1rem; }
+    }
+
+    /* ── Chart page ── */
+    #page-main { display: block; }
+    .chart-page-header {
+      background: var(--forest);
+      padding: clamp(2rem, 6vw, 3.5rem) var(--pad);
+    }
+    .chart-page-body {
+      padding: clamp(2rem, 6vw, 3.5rem) var(--pad);
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: none;
+      border: 1px solid var(--sage);
+      color: var(--sage);
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+    .back-btn:hover { background: var(--sage); color: var(--white); }
+    .chart-link {
+      color: var(--forest);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid var(--sage);
+      padding-bottom: 1px;
+    }
+    .chart-link:hover { color: var(--sage); }
+    .fiber-tips-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 1rem;
+      padding: 1rem 1.1rem;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: var(--sans);
+      text-align: left;
+    }
+    .fiber-tips-btn:hover { background: var(--sage-lt); }
+
+    
+    .fiber-chart-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+    .fiber-chart-section {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 1rem;
+    }
+    .fiber-chart-header {
+      padding: 0.65rem 1.1rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--white);
+      background: var(--forest);
+    }
+    .fiber-chart-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .fiber-chart-table thead th {
+      background: var(--sage-lt);
+      color: var(--forest);
+      padding: 0.5rem 1.1rem;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .fiber-chart-table tbody td {
+      padding: 0.45rem 1.1rem;
+      color: var(--mid);
+      border-bottom: 1px solid var(--border);
+    }
+    .fiber-chart-table tbody tr:last-child td { border-bottom: none; }
+    .fiber-chart-table tbody tr:nth-child(even) td { background: var(--cream); }
+    .fiber-chart-table td:last-child {
+      font-weight: 600;
+      color: var(--forest);
+      text-align: right;
+      white-space: nowrap;
+    }
+    .fiber-chart-table th:last-child { text-align: right; }
+    .chart-source {
+      font-size: 0.78rem;
+      color: var(--muted);
+      padding: 0.75rem 1.1rem 0.5rem;
+      margin: 0;
+    }
+    .chart-source a { color: var(--sage); text-decoration: none; }
+    .chart-source a:hover { text-decoration: underline; }
+
+    
+    .fiber-tips {
+      margin-top: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .fiber-tips summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.1rem;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      background: var(--cream);
+    }
+    .fiber-tips summary::-webkit-details-marker { display: none; }
+    .fiber-tips summary:hover { background: var(--sage-lt); }
+    .summary-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--forest);
+    }
+    .summary-chevron {
+      font-size: 0.7rem;
+      color: var(--sage);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    details[open] .summary-chevron { transform: rotate(180deg); }
+    .tips-body {
+      padding: 1.25rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .tip-group h3 {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .tip-group ul {
+      padding-left: 1.2rem;
+      font-size: 0.88rem;
+      color: var(--mid);
+      line-height: 1.75;
+    }
+    .tip-group ul li { margin-bottom: 0.15rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .summary-chevron { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="progress-bar" role="progressbar" aria-label="Reading progress"></div>
+
+  <!-- NAV -->
+  <nav aria-label="Site navigation">
+    <div class="nav-inner">
+      <a class="site-name" href="#hero">Fiber & Your Health</a>
+      <ul>
+        <li><a href="#" onclick="showChart(); return false;">Fiber Content Chart</a></li>
+        <li><a href="fiber-calculator.html">Fiber Calculator</a></li>
+        <li><a href="#dosing">Psyllium Husk Dosing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="inner">
+      <h1>95% of us aren't getting enough fiber.</h1>
+      <p class="subtitle">Fiber is the indigestible part of plant foods that moves through your digestive system, feeding beneficial gut bacteria, regulating bowel habits, and improving metabolic health. This guide explains how to increase your fiber intake in a practical, sustainable way.</p>
+
+      <p class="eyebrow" style="margin-bottom: 0.75rem;">Fiber can help with</p>
+      <div class="benefit-pills">
+        <span class="pill">Constipation</span>
+        <span class="pill">Diarrhea &amp; loose stools</span>
+        <span class="pill">IBS</span>
+        <span class="pill">Blood sugar control</span>
+        <span class="pill">High cholesterol</span>
+        <span class="pill">Appetite &amp; weight</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIETARY FIBER -->
+  <section id="dietary-fiber">
+    <div class="inner">
+      <p class="eyebrow">Dietary fiber</p>
+      <h2>Start with food.</h2>
+      <p>Increasing fiber in your diet is one of the most consistently beneficial changes you can make for your health. Higher dietary fiber intake is associated with better bowel regularity, lower cholesterol, improved blood sugar control, and reduced risk of colorectal cancer and cardiovascular disease. The targets are 25g per day for women and 38g per day for men.</p>
+      <p>Most people fall well short of these goals. The good news is that small, consistent swaps — rather than a complete diet overhaul — are often enough to make a meaningful difference.</p>
+
+      <details class="fiber-tips">
+        <summary>
+          <span class="summary-label">Practical ways to increase dietary fiber</span>
+          <span class="summary-chevron" aria-hidden="true">▼</span>
+        </summary>
+        <div class="tips-body">
+          <div class="tip-group">
+            <h3>Breakfast</h3>
+            <ul>
+              <li>Swap white bread or bagels for whole grain toast (2–3g fiber per slice)</li>
+              <li>Choose oatmeal over refined cereals — rolled or steel-cut oats provide 4g per serving</li>
+              <li>Add ground flaxseed or chia seeds to yogurt, oatmeal, or a smoothie (2–5g per tablespoon)</li>
+              <li>Look for cereals with at least 5g of fiber per serving; avoid those where sugar is a top ingredient</li>
+              <li>Add berries — raspberries and blackberries are among the highest-fiber fruits (4–8g per cup)</li>
+            </ul>
+          </div>
+          <div class="tip-group">
+            <h3>Lunch</h3>
+            <ul>
+              <li><strong>Legumes are the highest-fiber lunch option available</strong> — a cup of cooked lentils, chickpeas, black beans, kidney beans, or pinto beans provides 12–15g of fiber on its own</li>
+              <li>Lentil soup, chickpea salads, bean tacos, rice and beans, or a grain bowl with legumes are all practical ways to build a high-fiber lunch around these ingredients</li>
+              <li>Hummus with whole wheat pita or raw vegetables is an easy 4–8g addition</li>
+              <li>Edamame as a side dish provides 8g per cup</li>
+              <li>Replace white rice with brown rice when possible — or mix half and half if the swap feels too abrupt</li>
+            </ul>
+          </div>
+          <div class="tip-group">
+            <h3>Dinner</h3>
+            <ul>
+              <li>Fill half your plate with vegetables — broccoli, bok choy, Brussels sprouts, spinach, snow peas, artichokes, and cactus (nopales) are all high-fiber options that fit naturally into many cooking styles</li>
+              <li><strong>Beans and lentils belong at dinner too</strong> — chickpea or lentil stews, black bean soups, and dishes where legumes are cooked into a sauce or curry easily reach 10–15g of fiber per meal</li>
+              <li>Bulgur, brown rice, or whole wheat bread as a base adds 3–5g compared to refined grain alternatives</li>
+              <li>Tofu and vegetable stir-fries, grain and vegetable soups, or stuffed vegetables are all naturally fiber-dense meals</li>
+              <li>Roasted vegetables with the skin on retain more fiber than peeled or boiled ones</li>
+            </ul>
+          </div>
+          <div class="tip-group">
+            <h3>Snacks</h3>
+            <ul>
+              <li>An apple or pear with the skin on provides 4–5g of fiber</li>
+              <li>A small handful of almonds or pistachios adds 3g of fiber</li>
+              <li>Hummus with raw vegetables (carrots, celery, bell pepper) is a reliable 4–6g snack</li>
+              <li>Popcorn (air-popped) provides about 3.5g per 3-cup serving</li>
+              <li>Avoid fiber bars as a primary source — many have very little actual fiber and are high in added sugar</li>
+            </ul>
+          </div>
+          <div class="tip-group">
+            <h3>In liquids</h3>
+            <ul>
+              <li>Add a tablespoon of ground flaxseed to a morning smoothie — it blends in without changing the flavor</li>
+              <li>Blend spinach or kale into fruit smoothies for 1–2g of fiber per handful with minimal taste impact</li>
+              <li>Psyllium husk powder can be stirred into water, juice, or a smoothie as a supplement (see below)</li>
+              <li>Avoid relying on fiber-fortified drinks or juices as your primary source — they often contain added sugar and low-quality fiber</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <button class="fiber-tips-btn" onclick="showChart()">
+        <span class="summary-label">Fiber content of common foods</span>
+        <span class="summary-chevron" aria-hidden="true">→</span>
+      </button>
+      <a class="fiber-tips-btn" href="fiber-calculator.html" style="display:flex; margin-top: 0.75rem; text-decoration: none;">
+        <span class="summary-label">Calculate your daily fiber intake</span>
+        <span class="summary-chevron" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- SUPPLEMENTAL FIBER -->
+  <section id="fiber-types" class="alt">
+    <div class="inner">
+      <p class="eyebrow">Supplemental fiber</p>
+      <h2>Not all fiber supplements work the same way.</h2>
+      <p>When diet alone isn't enough to close the gap, supplements can help. But what determines whether a fiber supplement actually works is whether it forms a <strong>gel</strong> when it meets water in your gut.</p>
+      <div class="fiber-compare">
+        <div class="fiber-card gel">
+          <h3>Gel-forming fibers</h3>
+          <ul>
+            <li>Psyllium husk</li>
+            <li>Beta-glucan (oats, barley)</li>
+            <li>Raw guar gum</li>
+          </ul>
+        </div>
+        <div class="fiber-card non-gel">
+          <h3>Non-gel-forming fibers</h3>
+          <ul>
+            <li>Inulin</li>
+            <li>Wheat dextrin (Benefiber)</li>
+            <li>FOS (fructooligosaccharides)</li>
+            <li>Methylcellulose (Citrucel)</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top: 1.25rem; font-size: 0.9rem;">The most extensively studied gel-forming fiber in human clinical trials is <strong>psyllium husk</strong> — the active ingredient in Metamucil and many store-brand fiber supplements.</p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="inner">
+      <p class="eyebrow">How it works</p>
+      <h2>What psyllium actually does in your body.</h2>
+      <p>Psyllium is over 80% fiber by weight. When it reaches your digestive system, it absorbs water and forms a thick, slippery gel. That gel does four distinct things:</p>
+      <div class="mechanism-list">
+        <div class="mechanism-item">
+          <div class="mech-icon">🪣</div>
+          <div class="mech-text">
+            <h3>Softens and bulks stool (for constipation)</h3>
+          </div>
+        </div>
+        <div class="mechanism-item">
+          <div class="mech-icon">🧽</div>
+          <div class="mech-text">
+            <h3>Absorbs excess water and slows transit (for diarrhea)</h3>
+          </div>
+        </div>
+        <div class="mechanism-item">
+          <div class="mech-icon">📉</div>
+          <div class="mech-text">
+            <h3>Slows sugar absorption after meals</h3>
+          </div>
+        </div>
+        <div class="mechanism-item">
+          <div class="mech-icon">🔗</div>
+          <div class="mech-text">
+            <h3>Removes cholesterol-related bile acids</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDE EFFECTS -->
+  <section id="side-effects" class="alt">
+    <div class="inner">
+      <p class="eyebrow">What to expect</p>
+      <h2>The first two weeks can feel rough. That's normal.</h2>
+      <p>The most common reason people stop taking fiber is bloating and gas in the first week or two. Understanding why this happens makes it much easier to push through.</p>
+
+      <div class="mechanism-list">
+        <div class="mechanism-item">
+          <div class="mech-icon">🦠</div>
+          <div class="mech-text">
+            <h3>Why you get gas and bloating</h3>
+            <p>Gut bacteria need 1–2 weeks to adapt to psyllium. Until then, fermentation runs higher than normal, producing extra gas.</p>
+          </div>
+        </div>
+        <div class="mechanism-item">
+          <div class="mech-icon">💧</div>
+          <div class="mech-text">
+            <h3>Why you feel full or pressured</h3>
+            <p>Psyllium shifts water distribution in your colon before it has adapted, creating temporary fullness or pressure. This also resolves within 1–2 weeks.</p>
+          </div>
+        </div>
+        <div class="mechanism-item">
+          <div class="mech-icon">🔁</div>
+          <div class="mech-text">
+            <h3>If you stop and restart, the clock resets</h3>
+            <p>Stopping resets your gut bacteria's adaptation. Restarting produces the same side effects again — so it's better to lower the dose and ramp more slowly than to stop entirely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOSING -->
+  <section id="dosing">
+    <div class="inner">
+      <p class="eyebrow">How to take it</p>
+      <h2>Start low. Increase slowly. Give it four weeks.</h2>
+      <p>The most common reason psyllium doesn't work is not that it's the wrong product — it's that patients either start too high and stop due to side effects, or start too low and never reach an effective dose. Follow this ramp schedule and give it the full assessment window before deciding whether it's working.</p>
+
+      <div class="dose-steps">
+        <div class="dose-step">
+          <div class="dose-week"><span class="wnum">1</span>Week</div>
+          <div class="dose-body">
+            <h3>3–4 g once daily</h3>
+            <p><strong>Powder:</strong> 1 teaspoon in a full glass of water, once daily. <strong>Capsules:</strong> 5 capsules with 1.5 glasses of water, once daily.</p>
+            <p>Drink immediately — don't let it sit and gel.</p>
+          </div>
+        </div>
+        <div class="dose-step">
+          <div class="dose-week"><span class="wnum">2</span>Week</div>
+          <div class="dose-body">
+            <h3>6–8 g twice daily</h3>
+            <p><strong>Powder:</strong> 1 teaspoon, twice daily. <strong>Capsules:</strong> 5 capsules, twice daily.</p>
+            <p>If you experienced gas or bloating in week one, stay at once daily for another week before increasing.</p>
+          </div>
+        </div>
+        <div class="dose-step">
+          <div class="dose-week"><span class="wnum">3–4</span>Weeks</div>
+          <div class="dose-body">
+            <h3>9–12 g three times daily</h3>
+            <p><strong>Powder:</strong> 1 teaspoon, three times daily. <strong>Capsules:</strong> 5 capsules, three times daily. Taking a dose before each meal works well for most people.</p>
+          </div>
+        </div>
+        <div class="dose-step dose-target">
+          <div class="dose-week"><span class="wnum">4+</span>Weeks</div>
+          <div class="dose-body">
+            <h3>Target dose: 10–15 g daily</h3>
+            <p>This is the therapeutic range where most clinical studies show benefit. <strong>Wait at least 4 full weeks at this dose before assessing whether it's working.</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top: 1.5rem;">
+        <p><strong>Water is not optional.</strong> Psyllium begins gelling the moment it contacts liquid. Take powder with a minimum of 8 oz (one full glass) and drink it immediately. Capsules require even more — 10–12 oz per dose.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section id="safety" class="alt">
+    <div class="inner">
+      <p class="eyebrow">Safety & interactions</p>
+      <h2>When to be careful.</h2>
+      <p>Psyllium is safe for long-term daily use for most people. There are a few important situations where you should either adjust timing or consult your doctor first.</p>
+
+      <h3 style="margin-top: 1.5rem; margin-bottom: 0.75rem;">Medication timing</h3>
+      <p style="font-size: 0.9rem;">Because psyllium gel can physically absorb compounds in the gut — the same mechanism it uses to trap bile acids — it can reduce absorption of certain medications if taken at the same time. Separate psyllium from these medications by the indicated window:</p>
+
+      <div class="drug-list">
+        <div class="drug-item">
+          <div class="drug-name">Levothyroxine (thyroid)</div>
+          <div class="drug-detail">Separate by at least 4 hours. Taking together may reduce thyroid hormone absorption.</div>
+        </div>
+        <div class="drug-item">
+          <div class="drug-name">Warfarin</div>
+          <div class="drug-detail">Separate by 2 hours. Have your INR checked when starting psyllium.</div>
+        </div>
+        <div class="drug-item">
+          <div class="drug-name">Digoxin</div>
+          <div class="drug-detail">Separate by 2 hours.</div>
+        </div>
+        <div class="drug-item">
+          <div class="drug-name">Lithium</div>
+          <div class="drug-detail">Separate by 2 hours. Monitor lithium levels at initiation.</div>
+        </div>
+        <div class="drug-item">
+          <div class="drug-name">Insulin / sulfonylureas</div>
+          <div class="drug-detail">Monitor blood glucose closely when starting psyllium, as improved glycemic control may increase hypoglycemia risk in patients already on these medications.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="inner">
+      <p class="eyebrow">Common questions</p>
+      <h2>Questions patients often ask.</h2>
+
+      <div class="faq-list" role="list">
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq1">
+            I tried fiber before and it didn't help. Why would this be different?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq1" role="region">
+            The most common reasons fiber "doesn't work" are: the wrong type of fiber (products like Benefiber or Citrucel are not psyllium and don't form a gel), an inadequate dose (under 10 g daily is unlikely to produce a therapeutic effect), not enough water per dose, or not giving it enough time (less than 4 weeks at full dose). Before concluding fiber doesn't work for you, it's worth being specific about which product you used, how much, how often, and for how long.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq2">
+            Can I just eat more vegetables and fruit instead of taking a supplement?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq2" role="region">
+            Absolutely — and dietary fiber from whole foods comes with additional nutrients that supplements don't provide. But most people find it very difficult to close a 20-25 g daily fiber gap through food alone. The fiber calculator on this page can help you see exactly where your meals stand. For patients with active constipation, diarrhea, elevated cholesterol, or blood sugar issues, a psyllium supplement used alongside a high-fiber diet is usually more practical than trying to achieve therapeutic doses through food alone.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq3">
+            How long until I see results?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq3" role="region">
+            Bowel habit changes typically begin within the first 1–2 weeks at a therapeutic dose. Cholesterol and blood sugar improvements take longer — expect to reassess those at 6–8 weeks. The first 1–2 weeks may actually feel worse due to bloating and gas as your gut adapts. This is expected and should not be interpreted as psyllium making things worse.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq4">
+            Is it safe to take psyllium every day indefinitely?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq4" role="region">
+            Yes, for most people. Psyllium has a long safety record and works through a physical, non-drug mechanism without the dependency or receptor desensitization seen with stimulant laxatives like senna. If you are on long-term psyllium and also have marginal intake of calcium, iron, zinc, or magnesium, it's worth mentioning to your doctor, as psyllium may reduce absorption of these minerals over time — though the clinical significance of this at normal doses is still being studied.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq5">
+            I stopped taking it because of bloating. Can I try again?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq5" role="region">
+            Yes — but be aware that stopping and restarting resets your gut bacteria's adaptation to psyllium. Restarting will produce the same initial bloating and gas as when you first began. The solution is to restart at the lowest dose (3–4 g once daily) and ramp even more slowly than the first time — increasing every 10–14 days rather than every 7. The side effects will still resolve; you just need to give your system more time to adjust.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq6">
+            I have IBS with diarrhea. Isn't fiber going to make that worse?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq6" role="region">
+            This is a very common concern, and the answer is counterintuitive: psyllium is one of the few interventions with good evidence for both constipation-predominant and diarrhea-predominant IBS. The gel absorbs excess water and slows transit — it firms loose stool rather than accelerating it. Insoluble fiber (wheat bran, for example) can worsen IBS-D and should be avoided. Psyllium's gel-forming properties are specifically what differentiate it from these less appropriate fiber types.
+          </div>
+        </div>
+
+        <div class="faq-item" role="listitem">
+          <button class="faq-q" aria-expanded="false" aria-controls="faq7">
+            I'm on a GLP-1 medication (Ozempic, Wegovy, Mounjaro). Can I take psyllium?
+            <span class="chevron" aria-hidden="true">▼</span>
+          </button>
+          <div class="faq-a" id="faq7" role="region">
+            Both GLP-1 receptor agonists and psyllium slow gastric emptying through different mechanisms. There is not yet clinical trial data on this combination specifically. In theory, combining them could enhance satiety and glycemic benefits — or it could amplify GI side effects like nausea and fullness. If you are on a GLP-1 medication and want to add psyllium, start at a very low dose, ramp slowly, and let your prescribing provider know.
+          </div>
+        </div>
+
+      </div>
+
+      <a href="#" class="print-btn" onclick="window.print(); return false;">
+        🖨️ Print this page for your records
+      </a>
+    </div>
+  </section>
+
+  <!-- CHART PAGE (hidden by default) -->
+  <div id="page-chart" style="display:none;">
+    <div class="chart-page-header">
+      <div class="inner">
+        <button class="back-btn" onclick="hideChart()">← Fiber &amp; Your Health</button>
+        <h1 style="color:var(--white); font-size: clamp(1.4rem,4vw,2rem); margin: 0.5rem 0 0;">Fiber Content of Common Foods</h1>
+        <p style="color:var(--sage-lt); font-size:0.9rem; margin-top:0.4rem;">Source: <a href="https://mrclhowe.weebly.com/uploads/5/5/0/4/55041379/mott-fiber-chart.pdf" target="_blank" rel="noopener" style="color:var(--sage-lt);">University of Michigan Mott Children's Hospital</a></p>
+      </div>
+    </div>
+    <div class="chart-page-body">
+      <div class="inner">
+        <div class="fiber-chart-wrap">
+
+          <div class="fiber-chart-section">
+            <div class="fiber-chart-header">Fruits</div>
+            <table class="fiber-chart-table">
+              <thead><tr><th>Food</th><th>Serving</th><th>Fiber (g)</th></tr></thead>
+              <tbody>
+                <tr><td>Raspberries</td><td>1 cup</td><td>8.4</td></tr>
+                <tr><td>Prunes (dried)</td><td>10 prunes</td><td>6.0</td></tr>
+                <tr><td>Raisins (seedless)</td><td>2/3 cup</td><td>4.0</td></tr>
+                <tr><td>Pear</td><td>1 medium</td><td>4.0</td></tr>
+                <tr><td>Blueberries (raw)</td><td>1 cup</td><td>4.0</td></tr>
+                <tr><td>Apple (with skin)</td><td>1 medium</td><td>3.7</td></tr>
+                <tr><td>Strawberries</td><td>1 cup</td><td>3.4</td></tr>
+                <tr><td>Orange</td><td>1 medium</td><td>3.0</td></tr>
+                <tr><td>Banana</td><td>1 medium</td><td>2.7</td></tr>
+                <tr><td>Apricots</td><td>3 medium</td><td>2.5</td></tr>
+                <tr><td>Apple (without skin)</td><td>1 medium</td><td>2.4</td></tr>
+                <tr><td>Nectarine</td><td>1 medium</td><td>2.2</td></tr>
+                <tr><td>Tangerine</td><td>1 medium</td><td>2.0</td></tr>
+                <tr><td>Pineapple</td><td>1 cup</td><td>2.0</td></tr>
+                <tr><td>Applesauce</td><td>1/2 cup</td><td>2.0</td></tr>
+                <tr><td>Peach</td><td>1 medium</td><td>1.7</td></tr>
+                <tr><td>Grapefruit</td><td>1/2 medium</td><td>1.3</td></tr>
+                <tr><td>Cherries</td><td>10 cherries</td><td>1.3</td></tr>
+                <tr><td>Cantaloupe</td><td>1 cup</td><td>1.3</td></tr>
+                <tr><td>Fruit salad</td><td>1/2 cup</td><td>1.3</td></tr>
+                <tr><td>Grapes</td><td>1 cup</td><td>1.2</td></tr>
+                <tr><td>Mandarin oranges</td><td>1/2 cup</td><td>1.0</td></tr>
+                <tr><td>Plum</td><td>1 medium</td><td>1.0</td></tr>
+                <tr><td>Honeydew melon</td><td>1 cup</td><td>1.0</td></tr>
+                <tr><td>Watermelon</td><td>1 cup</td><td>0.8</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="fiber-chart-section">
+            <div class="fiber-chart-header">Vegetables &amp; Legumes</div>
+            <table class="fiber-chart-table">
+              <thead><tr><th>Food</th><th>Serving</th><th>Fiber (g)</th></tr></thead>
+              <tbody>
+                <tr><td>Pinto beans, boiled</td><td>1 cup</td><td>14.7</td></tr>
+                <tr><td>Baked beans</td><td>1 cup</td><td>14.0</td></tr>
+                <tr><td>Lima beans, boiled</td><td>1 cup</td><td>13.2</td></tr>
+                <tr><td>Artichoke, boiled</td><td>1 medium</td><td>6.2</td></tr>
+                <tr><td>Pumpkin, canned</td><td>1/2 cup</td><td>5.0</td></tr>
+                <tr><td>Potato, baked with skin</td><td>1 medium</td><td>5.0</td></tr>
+                <tr><td>Peas, green</td><td>1/2 cup</td><td>4.0</td></tr>
+                <tr><td>Squash, winter</td><td>1/2 cup</td><td>3.0</td></tr>
+                <tr><td>Sweet potato, baked</td><td>1 medium</td><td>3.0</td></tr>
+                <tr><td>Broccoli, boiled</td><td>1/2 cup</td><td>2.3</td></tr>
+                <tr><td>Spinach, boiled</td><td>1/2 cup</td><td>2.2</td></tr>
+                <tr><td>Brussels sprouts, boiled</td><td>1/2 cup</td><td>2.0</td></tr>
+                <tr><td>Green beans, boiled</td><td>1/2 cup</td><td>2.0</td></tr>
+                <tr><td>Carrot</td><td>1 medium</td><td>2.0</td></tr>
+                <tr><td>Corn, on the cob</td><td>1 ear</td><td>2.0</td></tr>
+                <tr><td>Potato, boiled</td><td>1 medium</td><td>2.0</td></tr>
+                <tr><td>Cauliflower, boiled</td><td>1/2 cup</td><td>1.7</td></tr>
+                <tr><td>Asparagus, boiled</td><td>1/2 cup (6 spears)</td><td>1.4</td></tr>
+                <tr><td>Onions, boiled</td><td>1/2 cup</td><td>1.0</td></tr>
+                <tr><td>Eggplant, boiled</td><td>1/2 cup</td><td>1.0</td></tr>
+                <tr><td>Coleslaw</td><td>1/2 cup</td><td>1.0</td></tr>
+                <tr><td>Tomato, raw</td><td>1 medium</td><td>1.0</td></tr>
+                <tr><td>Spinach, raw</td><td>1/2 cup</td><td>0.8</td></tr>
+                <tr><td>Celery</td><td>1 stalk</td><td>0.7</td></tr>
+                <tr><td>Cucumber</td><td>1/2 cup</td><td>0.5</td></tr>
+                <tr><td>Lettuce</td><td>1/2 cup</td><td>0.5</td></tr>
+                <tr><td>Mushrooms</td><td>1/2 cup</td><td>0.4</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="fiber-chart-section">
+            <div class="fiber-chart-header">Cereals</div>
+            <table class="fiber-chart-table">
+              <thead><tr><th>Food</th><th>Serving</th><th>Fiber (g)</th></tr></thead>
+              <tbody>
+                <tr><td>Fiber One (General Mills)</td><td>1/2 cup</td><td>13.0</td></tr>
+                <tr><td>Bran Buds (Kellogg's)</td><td>1/3 cup</td><td>12.0</td></tr>
+                <tr><td>All-Bran (Kellogg's)</td><td>1/2 cup</td><td>10.0</td></tr>
+                <tr><td>Raisin Bran (Kellogg's)</td><td>1 cup</td><td>8.2</td></tr>
+                <tr><td>Quaker Shredded Wheat</td><td>3 biscuits</td><td>7.3</td></tr>
+                <tr><td>Cracklin' Oat Bran (Kellogg's)</td><td>3/4 cup</td><td>5.6</td></tr>
+                <tr><td>Frosted Mini-Wheats</td><td>5 biscuits</td><td>5.0</td></tr>
+                <tr><td>Banana Nut Crunch</td><td>1 cup</td><td>4.0</td></tr>
+                <tr><td>Cheerios</td><td>1 cup</td><td>3.0</td></tr>
+                <tr><td>Instant Oatmeal</td><td>1 packet</td><td>3.0</td></tr>
+                <tr><td>Multi-Grain Cheerios</td><td>1 cup</td><td>3.0</td></tr>
+                <tr><td>Raisin Bran (General Mills)</td><td>3/4 cup</td><td>3.0</td></tr>
+                <tr><td>Honey Nut Cheerios</td><td>1 cup</td><td>2.0</td></tr>
+                <tr><td>Alpha-Bits</td><td>1 cup</td><td>1.0</td></tr>
+                <tr><td>Cream of Wheat</td><td>1 packet</td><td>1.0</td></tr>
+                <tr><td>Corn Pops</td><td>1 cup</td><td>0.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="fiber-chart-section">
+            <div class="fiber-chart-header">Breads, Grains &amp; Pasta</div>
+            <table class="fiber-chart-table">
+              <thead><tr><th>Food</th><th>Serving</th><th>Fiber (g)</th></tr></thead>
+              <tbody>
+                <tr><td>Spaghetti, whole wheat</td><td>1 cup</td><td>6.3</td></tr>
+                <tr><td>Macaroni, whole wheat</td><td>1 cup</td><td>4.0</td></tr>
+                <tr><td>Brown rice, long grain</td><td>1 cup</td><td>3.5</td></tr>
+                <tr><td>Seven grain bread (Bran'ola)</td><td>1 slice</td><td>3.0</td></tr>
+                <tr><td>Italian, Bakery Light</td><td>1 slice</td><td>2.5</td></tr>
+                <tr><td>Wheat, Bakery Light</td><td>1 slice</td><td>2.5</td></tr>
+                <tr><td>Macaroni</td><td>1 cup</td><td>1.8</td></tr>
+                <tr><td>Whole wheat bread</td><td>1 slice</td><td>2.0</td></tr>
+                <tr><td>Elbow macaroni</td><td>1/2 cup</td><td>2.0</td></tr>
+                <tr><td>Multi-grain bread</td><td>1 slice</td><td>1.5</td></tr>
+                <tr><td>Bagel</td><td>1 bagel</td><td>1.5</td></tr>
+                <tr><td>English muffin</td><td>1 muffin</td><td>1.5</td></tr>
+                <tr><td>Pancakes</td><td>1 medium-large</td><td>1.0</td></tr>
+                <tr><td>Pita, white</td><td>1 (6")</td><td>1.0</td></tr>
+                <tr><td>White rice</td><td>1 cup</td><td>1.0</td></tr>
+                <tr><td>White bread</td><td>1 slice</td><td>1.0</td></tr>
+                <tr><td>French bread</td><td>1 slice</td><td>0.5</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+        <button class="back-btn" onclick="hideChart()" style="margin-top: 2rem;">← Fiber &amp; Your Health</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer">
+    <div class="inner">
+      <p class="dis-title">Medical Disclaimer</p>
+      <p>This page is intended for general patient education only. It does not constitute medical advice, and it does not replace the guidance of your physician, gastroenterologist, or other qualified healthcare provider. Individual responses to fiber supplementation vary. If you have specific medical conditions — including swallowing difficulties, inflammatory bowel disease, known food allergies, or complex medication regimens — consult your provider before starting psyllium.</p>
+      <p>Information on this page is based on peer-reviewed clinical literature and consensus guidelines current as of 2026. Key references include McRorie & McKeown (2017, J Acad Nutr Diet), Gibb et al. (2015, Am J Clin Nutr), Bijkerk et al. (2009, BMJ), Lambeau & McRorie (2017, J Am Assoc Nurse Pract), and ACG/AGA clinical guidelines for IBS management.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>Fiber & Your Health · Patient Education Resource · Not a substitute for individualized medical advice</p>
+  </footer>
+
+  <script>
+    // Chart page toggle
+    const mainSections = document.querySelectorAll('body > *:not(#page-chart)');
+    function showChart() {
+      mainSections.forEach(el => el.style.display = 'none');
+      const chart = document.getElementById('page-chart');
+      chart.style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+    function hideChart() {
+      mainSections.forEach(el => el.style.display = '');
+      document.getElementById('page-chart').style.display = 'none';
+      document.getElementById('dietary-fiber').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    
+    const bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const doc = document.documentElement;
+      const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+      bar.style.width = (scrolled * 100) + '%';
+    }, { passive: true });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        const targetId = btn.getAttribute('aria-controls');
+        const panel = document.getElementById(targetId);
+
+        // Close all
+        document.querySelectorAll('.faq-q').forEach(b => {
+          b.setAttribute('aria-expanded', 'false');
+        });
+        document.querySelectorAll('.faq-a').forEach(p => {
+          p.classList.remove('open');
+        });
+
+        // Open clicked if it was closed
+        if (!expanded) {
+          btn.setAttribute('aria-expanded', 'true');
+          panel.classList.add('open');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

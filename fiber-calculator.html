@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiber Calculator | Fiber & Your Health</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest:  #1A4A3A;
+      --sage:    #7BA898;
+      --sage-lt: #D4E8E2;
+      --cream:   #F7F4EF;
+      --amber:   #C8861A;
+      --amber-lt:#FDF3E0;
+      --ink:     #1C1C1C;
+      --mid:     #4A4A4A;
+      --muted:   #7A7A7A;
+      --border:  #DDD8D0;
+      --white:   #FFFFFF;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans:  'Inter', system-ui, sans-serif;
+      --max: 720px;
+      --pad: clamp(1rem, 5vw, 2rem);
+    }
+
+    body {
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--cream);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--forest);
+      padding: clamp(1.5rem, 5vw, 2.5rem) var(--pad);
+    }
+    header .inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .back-link {
+      font-size: 0.8rem;
+      color: var(--sage);
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
+    }
+    .back-link:hover { color: var(--sage-lt); }
+    header h1 {
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--white);
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    header p {
+      color: var(--sage-lt);
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+      max-width: 480px;
+    }
+
+    /* ── Layout ── */
+    .calculator-wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: clamp(1.5rem, 5vw, 2.5rem) var(--pad);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--cream);
+    }
+    .card-body { padding: 1.25rem; }
+
+    /* ── Age/sex selector ── */
+    .target-row-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    .age-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.6rem;
+    }
+    .age-btn {
+      padding: 0.65rem 0.5rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: var(--white);
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--mid);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+    .age-btn:hover { border-color: var(--sage); color: var(--forest); }
+    .age-btn.active {
+      border-color: var(--forest);
+      background: var(--forest);
+      color: var(--white);
+    }
+    .sex-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .sex-btn {
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      background: var(--white);
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--mid);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+    .sex-btn:hover { border-color: var(--sage); color: var(--forest); }
+    .sex-btn.active {
+      border-color: var(--forest);
+      background: var(--forest);
+      color: var(--white);
+    }
+    .target-note {
+      margin-top: 1rem;
+      min-height: 1.4em;
+    }
+    .target-note-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.2rem;
+    }
+    .target-note-value {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      color: var(--forest);
+      line-height: 1.1;
+    }
+
+    /* ── Progress bar ── */
+    .progress-section { padding: 1.25rem; }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.6rem;
+    }
+    .progress-total {
+      font-family: var(--serif);
+      font-size: 2rem;
+      color: var(--forest);
+      line-height: 1;
+    }
+    .progress-total span {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-left: 0.25rem;
+    }
+    .progress-target {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .progress-bar-track {
+      height: 8px;
+      background: var(--cream);
+      border-radius: 100px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: var(--sage);
+      transition: width 0.3s ease;
+      min-width: 0;
+    }
+    .progress-bar-fill.at-goal { background: var(--forest); }
+    .progress-bar-fill.over-goal { background: var(--amber); }
+    .progress-status {
+      margin-top: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      min-height: 1.2em;
+    }
+    .progress-status.met { color: var(--forest); font-weight: 500; }
+    .progress-status.over { color: var(--amber); font-weight: 500; }
+
+    /* ── Search ── */
+    .search-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: stretch;
+    }
+    .search-input {
+      flex: 1;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.9rem;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--sage); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .category-filter {
+      padding: 0.65rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--mid);
+      background: var(--white);
+      outline: none;
+      cursor: pointer;
+    }
+    .category-filter:focus { border-color: var(--sage); }
+
+    /* ── Food results ── */
+    .food-results {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .food-results:empty { display: none; }
+    .food-result-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      gap: 0.75rem;
+      background: var(--white);
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .food-result-item:last-child { border-bottom: none; }
+    .food-result-item:hover { background: var(--sage-lt); }
+    .food-result-left { flex: 1; min-width: 0; }
+    .food-result-name {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .food-result-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+    .food-result-fiber {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--forest);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .food-add-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: var(--sage-lt);
+      color: var(--forest);
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+    .food-add-btn:hover { background: var(--sage); color: var(--white); }
+
+    /* ── Serving stepper ── */
+    .serving-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: var(--white);
+    }
+    .serving-stepper:hover { border-color: var(--sage); }
+    .step-btn {
+      width: 26px;
+      height: 28px;
+      border: none;
+      background: var(--cream);
+      color: var(--forest);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .step-btn:hover { background: var(--sage-lt); }
+    .step-val {
+      min-width: 28px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 0 2px;
+      line-height: 28px;
+      height: 28px;
+    }
+
+    /* ── Meal log ── */
+    .meal-log {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .meal-log-empty {
+      padding: 2rem 1.25rem;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    .log-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      gap: 0.75rem;
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-item-left { flex: 1; min-width: 0; }
+    .log-item-name {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .log-item-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+    .log-item-fiber {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--forest);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .log-remove-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 0;
+      line-height: 1;
+    }
+    .log-remove-btn:hover { color: #B83232; background: #FDE8E8; }
+
+    /* ── Custom food ── */
+    .custom-food-form {
+      display: grid;
+      grid-template-columns: 1fr 90px auto;
+      gap: 0.6rem;
+      align-items: center;
+    }
+    .custom-input {
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.88rem;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+    }
+    .custom-input:focus { border-color: var(--sage); }
+    .custom-input::placeholder { color: var(--muted); }
+    .custom-add-btn {
+      padding: 0.65rem 1rem;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .custom-add-btn:hover { background: var(--sage); }
+    .custom-error {
+      font-size: 0.78rem;
+      color: #B83232;
+      margin-top: 0.3rem;
+      min-height: 1.2em;
+    }
+    @media (max-width: 480px) {
+      .custom-food-form { grid-template-columns: 1fr 75px auto; }
+    }
+
+    /* ── Supplements ── */
+    .supp-section {
+      border-top: 1px solid var(--border);
+      background: var(--cream);
+    }
+    .supp-section-header {
+      padding: 0.55rem 1.25rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .supp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .supp-row:last-child { border-bottom: none; }
+    .supp-left { flex: 1; min-width: 0; }
+    .supp-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--forest);
+    }
+    .supp-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+    .supp-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .supp-dose-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      color: var(--forest);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .supp-dose-btn:hover { border-color: var(--sage); background: var(--sage-lt); }
+    .supp-count {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--forest);
+      min-width: 1.5rem;
+      text-align: center;
+    }
+    .supp-fiber {
+      font-size: 0.82rem;
+      color: var(--sage);
+      font-weight: 600;
+      white-space: nowrap;
+      min-width: 3rem;
+      text-align: right;
+    }
+
+    /* ── Clear button ── */
+    .clear-btn {
+      display: block;
+      width: 100%;
+      padding: 0.65rem;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      text-align: center;
+    }
+    .clear-btn:hover { border-color: #B83232; color: #B83232; background: #FDE8E8; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 7px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: var(--sage); }
+    .copy-btn.copied { background: #2A7A4A; }
+
+    /* ── No results / custom inline ── */
+    .no-results {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .custom-inline-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.75rem 1rem;
+      background: var(--cream);
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .custom-inline-label {
+      font-size: 0.82rem;
+      color: var(--mid);
+      flex-shrink: 0;
+    }
+    .custom-inline-name {
+      flex: 1;
+      min-width: 100px;
+      padding: 0.4rem 0.6rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+    }
+    .custom-inline-name:focus { border-color: var(--sage); }
+    .custom-inline-fiber {
+      width: 72px;
+      padding: 0.4rem 0.6rem;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.85rem;
+      color: var(--ink);
+      background: var(--white);
+      outline: none;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .custom-inline-fiber:focus { border-color: var(--sage); }
+    .custom-inline-fiber::placeholder { color: var(--muted); font-size: 0.78rem; }
+    .custom-inline-add {
+      padding: 0.4rem 0.85rem;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .custom-inline-add:hover { background: var(--sage); }
+    .custom-inline-error {
+      width: 100%;
+      font-size: 0.75rem;
+      color: #B83232;
+      margin-top: -0.25rem;
+    }
+
+    @media (max-width: 480px) {
+      .search-row { flex-direction: column; }
+      .sex-toggle { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="inner">
+      <div>
+        <a class="back-link" href="index.html">← Fiber & Your Health</a>
+        <h1>Fiber Calculator</h1>
+        <p>Add foods to see how much fiber you're getting and how close you are to your daily target. Use the copy button to export your log to any app.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="calculator-wrap">
+
+    <!-- AGE / SEX / TARGET -->
+    <div class="card">
+      <div class="card-header">Your daily target</div>
+      <div class="card-body">
+        <div class="target-row-label">Age range</div>
+        <div class="age-toggle" id="age-toggle">
+          <button class="age-btn" id="btn-18" onclick="setAge('18-30')">18 – 30</button>
+          <button class="age-btn" id="btn-31" onclick="setAge('31-50')">31 – 50</button>
+          <button class="age-btn" id="btn-51" onclick="setAge('51+')">51+</button>
+        </div>
+        <div class="target-row-label" style="margin-top: 0.85rem;">Sex</div>
+        <div class="sex-toggle">
+          <button class="sex-btn" id="btn-female" onclick="setSex('female')">Female</button>
+          <button class="sex-btn" id="btn-male" onclick="setSex('male')">Male</button>
+        </div>
+        <div class="target-note" id="target-note"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="card">
+      <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Today's total</span>
+        <span id="today-date" style="font-weight:400; letter-spacing:0; text-transform:none; font-size:0.78rem; color:var(--muted);"></span>
+      </div>
+      <div class="progress-section">
+        <div class="progress-header">
+          <div class="progress-total" id="total-display">0<span>g fiber</span></div>
+          <div class="progress-target" id="target-display">— g target</div>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-status" id="progress-status"></div>
+      </div>
+    </div>
+
+    <!-- SEARCH & ADD -->
+    <div class="card">
+      <div class="card-header">Add foods</div>
+      <div class="card-body">
+        <div class="search-row">
+          <input
+            class="search-input"
+            id="food-search"
+            type="text"
+            placeholder="Search foods (e.g. apple, lentils, oats…)"
+            oninput="renderResults()"
+            autocomplete="off"
+          />
+          <select class="category-filter" id="category-filter" onchange="renderResults()">
+            <option value="">All categories</option>
+            <option value="Fruits">Fruits</option>
+            <option value="Vegetables">Vegetables</option>
+            <option value="Legumes">Legumes</option>
+            <option value="Grains & Bread">Grains & Bread</option>
+            <option value="Cereals">Cereals</option>
+            <option value="Nuts & Seeds">Nuts & Seeds</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="food-results" id="food-results"></div>
+      </div>
+    </div>
+
+    <!-- MEAL LOG -->
+    <div class="card">
+      <div class="card-header">Your meal log</div>
+      <div class="meal-log" id="meal-log">
+        <div class="meal-log-empty" id="log-empty">No foods added yet. Search above to get started.</div>
+      </div>
+
+      <!-- Supplements -->
+      <div class="supp-section" id="supp-section">
+        <div class="supp-section-header">Fiber supplements</div>
+        <div class="supp-row">
+          <div class="supp-left">
+            <div class="supp-label">Psyllium husk (e.g. Metamucil)</div>
+            <div class="supp-sub">1 tsp powder = 2.4g fiber per dose</div>
+          </div>
+          <div class="supp-controls">
+            <button class="supp-dose-btn" onclick="changeSupp('psyllium', -1)">−</button>
+            <span class="supp-count" id="psyllium-count">0</span>
+            <button class="supp-dose-btn" onclick="changeSupp('psyllium', 1)">+</button>
+            <span class="supp-fiber" id="psyllium-fiber">—</span>
+          </div>
+        </div>
+        <div class="supp-row">
+          <div class="supp-left">
+            <div class="supp-label">Methylcellulose (e.g. Citrucel)</div>
+            <div class="supp-sub">1 tbsp powder = 2.0g fiber per dose</div>
+          </div>
+          <div class="supp-controls">
+            <button class="supp-dose-btn" onclick="changeSupp('citrucel', -1)">−</button>
+            <span class="supp-count" id="citrucel-count">0</span>
+            <button class="supp-dose-btn" onclick="changeSupp('citrucel', 1)">+</button>
+            <span class="supp-fiber" id="citrucel-fiber">—</span>
+          </div>
+        </div>
+        <div class="supp-row">
+          <div class="supp-left">
+            <div class="supp-label">Wheat dextrin (e.g. Benefiber)</div>
+            <div class="supp-sub">1 tsp powder = 3.0g fiber per dose</div>
+          </div>
+          <div class="supp-controls">
+            <button class="supp-dose-btn" onclick="changeSupp('benefiber', -1)">−</button>
+            <span class="supp-count" id="benefiber-count">0</span>
+            <button class="supp-dose-btn" onclick="changeSupp('benefiber', 1)">+</button>
+            <span class="supp-fiber" id="benefiber-fiber">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--border); display:flex; gap:0.6rem;">
+        <button class="copy-btn" onclick="copyLog()" id="copy-btn">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block; vertical-align:-1px; margin-right:5px;">
+            <rect x="4" y="4" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.4" fill="none"/>
+            <path d="M9 4V2.2A1.2 1.2 0 0 0 7.8 1H2.2A1.2 1.2 0 0 0 1 2.2V7.8A1.2 1.2 0 0 0 2.2 9H4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>Copy log to clipboard</button>
+        <button class="clear-btn" onclick="clearLog()" style="flex:0 0 auto; width:auto; padding: 0.65rem 1rem;">Clear all</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ── Food database ──
+    const foods = [
+      // Fruits
+      { name: 'Raspberries', serving: '1 cup', fiber: 8.4, category: 'Fruits' },
+      { name: 'Prunes (dried)', serving: '10 prunes', fiber: 6.0, category: 'Fruits' },
+      { name: 'Raisins', serving: '2/3 cup', fiber: 4.0, category: 'Fruits' },
+      { name: 'Pear', serving: '1 medium', fiber: 4.0, category: 'Fruits' },
+      { name: 'Blueberries', serving: '1 cup', fiber: 4.0, category: 'Fruits' },
+      { name: 'Apple (with skin)', serving: '1 medium', fiber: 3.7, category: 'Fruits' },
+      { name: 'Strawberries', serving: '1 cup', fiber: 3.4, category: 'Fruits' },
+      { name: 'Orange', serving: '1 medium', fiber: 3.0, category: 'Fruits' },
+      { name: 'Banana', serving: '1 medium', fiber: 2.7, category: 'Fruits' },
+      { name: 'Apricots', serving: '3 medium', fiber: 2.5, category: 'Fruits' },
+      { name: 'Apple (without skin)', serving: '1 medium', fiber: 2.4, category: 'Fruits' },
+      { name: 'Nectarine', serving: '1 medium', fiber: 2.2, category: 'Fruits' },
+      { name: 'Tangerine', serving: '1 medium', fiber: 2.0, category: 'Fruits' },
+      { name: 'Pineapple', serving: '1 cup', fiber: 2.0, category: 'Fruits' },
+      { name: 'Applesauce', serving: '1/2 cup', fiber: 2.0, category: 'Fruits' },
+      { name: 'Peach', serving: '1 medium', fiber: 1.7, category: 'Fruits' },
+      { name: 'Grapes', serving: '1 cup', fiber: 1.2, category: 'Fruits' },
+      { name: 'Watermelon', serving: '1 cup', fiber: 0.8, category: 'Fruits' },
+      // Vegetables
+      { name: 'Artichoke (boiled)', serving: '1 medium', fiber: 6.2, category: 'Vegetables' },
+      { name: 'Pumpkin (canned)', serving: '1/2 cup', fiber: 5.0, category: 'Vegetables' },
+      { name: 'Potato (baked with skin)', serving: '1 medium', fiber: 5.0, category: 'Vegetables' },
+      { name: 'Peas (green)', serving: '1/2 cup', fiber: 4.0, category: 'Vegetables' },
+      { name: 'Squash (winter)', serving: '1/2 cup', fiber: 3.0, category: 'Vegetables' },
+      { name: 'Sweet potato (baked)', serving: '1 medium', fiber: 3.0, category: 'Vegetables' },
+      { name: 'Broccoli (boiled)', serving: '1/2 cup', fiber: 2.3, category: 'Vegetables' },
+      { name: 'Spinach (boiled)', serving: '1/2 cup', fiber: 2.2, category: 'Vegetables' },
+      { name: 'Brussels sprouts (boiled)', serving: '1/2 cup', fiber: 2.0, category: 'Vegetables' },
+      { name: 'Green beans (boiled)', serving: '1/2 cup', fiber: 2.0, category: 'Vegetables' },
+      { name: 'Carrot', serving: '1 medium', fiber: 2.0, category: 'Vegetables' },
+      { name: 'Corn (on the cob)', serving: '1 ear', fiber: 2.0, category: 'Vegetables' },
+      { name: 'Cauliflower (boiled)', serving: '1/2 cup', fiber: 1.7, category: 'Vegetables' },
+      { name: 'Asparagus (boiled)', serving: '6 spears', fiber: 1.4, category: 'Vegetables' },
+      { name: 'Bok choy (cooked)', serving: '1 cup', fiber: 1.7, category: 'Vegetables' },
+      { name: 'Nopales (cactus, cooked)', serving: '1 cup', fiber: 3.0, category: 'Vegetables' },
+      { name: 'Kale (cooked)', serving: '1 cup', fiber: 2.6, category: 'Vegetables' },
+      { name: 'Tomato (raw)', serving: '1 medium', fiber: 1.0, category: 'Vegetables' },
+      { name: 'Celery', serving: '1 stalk', fiber: 0.7, category: 'Vegetables' },
+      { name: 'Cucumber', serving: '1/2 cup', fiber: 0.5, category: 'Vegetables' },
+      // Legumes
+      { name: 'Pinto beans (cooked)', serving: '1 cup', fiber: 14.7, category: 'Legumes' },
+      { name: 'Lentils (cooked)', serving: '1 cup', fiber: 15.6, category: 'Legumes' },
+      { name: 'Black beans (cooked)', serving: '1 cup', fiber: 15.0, category: 'Legumes' },
+      { name: 'Kidney beans (cooked)', serving: '1 cup', fiber: 13.1, category: 'Legumes' },
+      { name: 'Chickpeas (cooked)', serving: '1 cup', fiber: 12.5, category: 'Legumes' },
+      { name: 'Baked beans', serving: '1 cup', fiber: 14.0, category: 'Legumes' },
+      { name: 'Lima beans (cooked)', serving: '1 cup', fiber: 13.2, category: 'Legumes' },
+      { name: 'Edamame', serving: '1 cup', fiber: 8.0, category: 'Legumes' },
+      { name: 'Hummus', serving: '1/4 cup', fiber: 3.5, category: 'Legumes' },
+      { name: 'Split peas (cooked)', serving: '1 cup', fiber: 16.3, category: 'Legumes' },
+      // Grains & Bread
+      { name: 'Spaghetti (whole wheat, cooked)', serving: '1 cup', fiber: 6.3, category: 'Grains & Bread' },
+      { name: 'Macaroni (whole wheat, cooked)', serving: '1 cup', fiber: 4.0, category: 'Grains & Bread' },
+      { name: 'Brown rice (cooked)', serving: '1 cup', fiber: 3.5, category: 'Grains & Bread' },
+      { name: 'Quinoa (cooked)', serving: '1 cup', fiber: 5.2, category: 'Grains & Bread' },
+      { name: 'Oatmeal (cooked)', serving: '1 cup', fiber: 4.0, category: 'Grains & Bread' },
+      { name: 'Barley (cooked)', serving: '1 cup', fiber: 6.0, category: 'Grains & Bread' },
+      { name: 'Bulgur (cooked)', serving: '1 cup', fiber: 8.2, category: 'Grains & Bread' },
+      { name: 'Farro (cooked)', serving: '1 cup', fiber: 5.0, category: 'Grains & Bread' },
+      { name: 'Whole wheat bread', serving: '1 slice', fiber: 2.0, category: 'Grains & Bread' },
+      { name: 'Seven grain bread', serving: '1 slice', fiber: 3.0, category: 'Grains & Bread' },
+      { name: 'White bread', serving: '1 slice', fiber: 1.0, category: 'Grains & Bread' },
+      { name: 'White rice (cooked)', serving: '1 cup', fiber: 1.0, category: 'Grains & Bread' },
+      { name: 'Whole wheat pita', serving: '1 (6")', fiber: 4.7, category: 'Grains & Bread' },
+      { name: 'Whole wheat tortilla', serving: '1 medium', fiber: 3.5, category: 'Grains & Bread' },
+      { name: 'Corn tortilla', serving: '2 small', fiber: 2.4, category: 'Grains & Bread' },
+      { name: 'Popcorn (air-popped)', serving: '3 cups', fiber: 3.5, category: 'Grains & Bread' },
+      { name: 'English muffin (whole wheat)', serving: '1 muffin', fiber: 4.4, category: 'Grains & Bread' },
+      // Cereals
+      { name: 'Fiber One (General Mills)', serving: '1/2 cup', fiber: 13.0, category: 'Cereals' },
+      { name: 'Bran Buds (Kellogg\'s)', serving: '1/3 cup', fiber: 12.0, category: 'Cereals' },
+      { name: 'All-Bran (Kellogg\'s)', serving: '1/2 cup', fiber: 10.0, category: 'Cereals' },
+      { name: 'Raisin Bran (Kellogg\'s)', serving: '1 cup', fiber: 8.2, category: 'Cereals' },
+      { name: 'Shredded Wheat', serving: '3 biscuits', fiber: 7.3, category: 'Cereals' },
+      { name: 'Frosted Mini-Wheats', serving: '5 biscuits', fiber: 5.0, category: 'Cereals' },
+      { name: 'Cheerios', serving: '1 cup', fiber: 3.0, category: 'Cereals' },
+      { name: 'Instant Oatmeal', serving: '1 packet', fiber: 3.0, category: 'Cereals' },
+      { name: 'Raisin Bran (General Mills)', serving: '3/4 cup', fiber: 3.0, category: 'Cereals' },
+      { name: 'Granola', serving: '1/2 cup', fiber: 3.5, category: 'Cereals' },
+      // Nuts & Seeds
+      { name: 'Chia seeds', serving: '1 tbsp', fiber: 4.1, category: 'Nuts & Seeds' },
+      { name: 'Ground flaxseed', serving: '1 tbsp', fiber: 2.8, category: 'Nuts & Seeds' },
+      { name: 'Almonds', serving: '1 oz (23 nuts)', fiber: 3.5, category: 'Nuts & Seeds' },
+      { name: 'Pistachios', serving: '1 oz (49 nuts)', fiber: 3.0, category: 'Nuts & Seeds' },
+      { name: 'Sunflower seeds', serving: '1/4 cup', fiber: 3.0, category: 'Nuts & Seeds' },
+      { name: 'Walnuts', serving: '1 oz', fiber: 2.0, category: 'Nuts & Seeds' },
+      { name: 'Peanut butter', serving: '2 tbsp', fiber: 1.9, category: 'Nuts & Seeds' },
+      { name: 'Hemp seeds', serving: '3 tbsp', fiber: 1.2, category: 'Nuts & Seeds' },
+      // Other
+      { name: 'Avocado', serving: '1/2 medium', fiber: 5.0, category: 'Other' },
+      { name: 'Dark chocolate (70%+)', serving: '1 oz', fiber: 3.1, category: 'Other' },
+      { name: 'Coconut (shredded, unsweetened)', serving: '1/4 cup', fiber: 3.6, category: 'Other' },
+      { name: 'Tofu (firm)', serving: '1/2 cup', fiber: 0.3, category: 'Other' },
+    ];
+
+    // ── State ──
+    let sex = null;
+    let ageGroup = null;
+    let target = null;
+    let log = [];
+    const supps = {
+      psyllium:  { doses: 0, fiberPerDose: 2.4 },
+      citrucel:  { doses: 0, fiberPerDose: 2.0 },
+      benefiber: { doses: 0, fiberPerDose: 3.0 },
+    };
+
+    // Fiber targets from Dietary Guidelines (DRI table)
+    // Female: 19-30→28, 31-50→25, 51+→22
+    // Male:   19-30→34, 31-50→31, 51+→28
+    const fiberTargets = {
+      female: { '18-30': 28, '31-50': 25, '51+': 22 },
+      male:   { '18-30': 34, '31-50': 31, '51+': 28 },
+    };
+
+    function setAge(ag) {
+      ageGroup = ag;
+      ['18', '31', '51'].forEach(id => document.getElementById(`btn-${id}`).classList.remove('active'));
+      const idMap = { '18-30': 'btn-18', '31-50': 'btn-31', '51+': 'btn-51' };
+      document.getElementById(idMap[ag]).classList.add('active');
+      updateTarget();
+    }
+
+    function setSex(s) {
+      sex = s;
+      document.getElementById('btn-female').classList.toggle('active', s === 'female');
+      document.getElementById('btn-male').classList.toggle('active', s === 'male');
+      updateTarget();
+    }
+
+    function updateTarget() {
+      if (!sex || !ageGroup) return;
+      target = fiberTargets[sex][ageGroup];
+      document.getElementById('target-note').innerHTML = `
+        <div class="target-note-label">Your daily fiber target</div>
+        <div class="target-note-value">${target}g</div>
+      `;
+      document.getElementById('target-display').textContent = `${target}g target`;
+      updateProgress();
+    }
+
+    // ── Search & results ──
+    function renderResults() {
+      const query = document.getElementById('food-search').value.trim();
+      const cat = document.getElementById('category-filter').value;
+      const container = document.getElementById('food-results');
+
+      if (!query && !cat) { container.innerHTML = ''; return; }
+
+      const filtered = foods.filter(f => {
+        const matchQ = !query || f.name.toLowerCase().includes(query.toLowerCase());
+        const matchC = !cat || f.category === cat;
+        return matchQ && matchC;
+      }).slice(0, 30);
+
+      const customRow = query ? `
+        <div class="custom-inline-row" id="custom-inline-row">
+          <span class="custom-inline-label">"${query}" not in database — add manually:</span>
+          <input class="custom-inline-name" id="custom-inline-name" type="text" value="${query.replace(/"/g,'&quot;')}" />
+          <input class="custom-inline-fiber" id="custom-inline-fiber" type="number" placeholder="Fiber (g)" min="0" step="0.1" onkeydown="if(event.key==='Enter') addCustomInline()" />
+          <button class="custom-inline-add" onclick="addCustomInline()">Add</button>
+          <span class="custom-inline-error" id="custom-inline-error"></span>
+        </div>` : '';
+
+      if (filtered.length === 0) {
+        container.innerHTML = customRow || '<div class="no-results">No foods found.</div>';
+        return;
+      }
+
+      container.innerHTML = filtered.map((f, i) => `
+        <div class="food-result-item" id="row-${i}" onclick="addFoodRow(${foods.indexOf(f)}, ${i}, 'row-${i}')">
+          <div class="food-result-left">
+            <div class="food-result-name">${f.name}</div>
+            <div class="food-result-meta">${f.serving} &nbsp;·&nbsp; ${f.category}</div>
+          </div>
+          <div class="serving-stepper" onclick="event.stopPropagation()">
+            <button class="step-btn" onclick="stepServing(${i}, -0.5, ${f.fiber})">−</button>
+            <span class="step-val" id="qty-${i}">1</span>
+            <button class="step-btn" onclick="stepServing(${i}, 0.5, ${f.fiber})">+</button>
+          </div>
+          <div class="food-result-fiber" id="fiber-${i}">${f.fiber}g</div>
+        </div>
+      `).join('') + customRow;
+    }
+
+    // ── Custom food (inline) ──
+    function addCustomInline() {
+      const nameEl = document.getElementById('custom-inline-name');
+      const fiberEl = document.getElementById('custom-inline-fiber');
+      const errorEl = document.getElementById('custom-inline-error');
+      const name = nameEl ? nameEl.value.trim() : '';
+      const fiber = parseFloat(fiberEl ? fiberEl.value : '');
+
+      if (!name) { if (errorEl) errorEl.textContent = 'Enter a name.'; return; }
+      if (isNaN(fiber) || fiber < 0) { if (errorEl) errorEl.textContent = 'Enter fiber in grams (e.g. 3.5).'; return; }
+
+      log.push({ name, serving: 'custom serving', qty: 1, fiber: Math.round(fiber * 10) / 10, category: 'Custom' });
+      document.getElementById('food-search').value = '';
+      document.getElementById('food-results').innerHTML = '';
+      renderLog();
+      updateProgress();
+    }
+
+    function stepServing(i, delta, baseFiber) {
+      const el = document.getElementById(`qty-${i}`);
+      const fiberEl = document.getElementById(`fiber-${i}`);
+      if (!el) return;
+      const current = parseFloat(el.textContent) || 1;
+      const next = Math.max(0.5, Math.round((current + delta) * 2) / 2);
+      el.textContent = next % 1 === 0 ? next : next.toFixed(1);
+      if (fiberEl && baseFiber != null) {
+        const total = Math.round(baseFiber * next * 10) / 10;
+        fiberEl.textContent = total + 'g';
+      }
+    }
+
+    function addFoodRow(foodIdx, i, rowId) {
+      const food = foods[foodIdx];
+      const qtyEl = document.getElementById(`qty-${i}`);
+      const qty = parseFloat(qtyEl ? qtyEl.textContent : '1') || 1;
+      const fiber = Math.round(food.fiber * qty * 10) / 10;
+      const row = document.getElementById(rowId);
+      if (row) {
+        row.style.background = 'var(--sage-lt)';
+        row.style.transition = 'background 0.15s';
+        setTimeout(() => { row.style.background = ''; }, 400);
+      }
+      log.push({ name: food.name, serving: food.serving, qty, fiber, category: food.category });
+      renderLog();
+      updateProgress();
+    }
+
+    function addFood(foodIdx, qtyId) {
+      const food = foods[foodIdx];
+      const qty = parseFloat(document.getElementById(qtyId).value) || 1;
+      const fiber = Math.round(food.fiber * qty * 10) / 10;
+      log.push({ name: food.name, serving: food.serving, qty, fiber, category: food.category });
+      renderLog();
+      updateProgress();
+    }
+
+    // ── Log ──
+    function renderLog() {
+      const container = document.getElementById('meal-log');
+      const card = container.parentNode;
+      const empty = document.getElementById('log-empty');
+
+      // Always clear existing log items from the card
+      card.querySelectorAll('.log-item').forEach(el => el.remove());
+
+      if (log.length === 0) {
+        empty.style.display = '';
+        return;
+      }
+
+      empty.style.display = 'none';
+
+      const suppSection = document.getElementById('supp-section');
+      log.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        div.innerHTML = `
+          <div class="log-item-left">
+            <div class="log-item-name">${item.name}</div>
+            <div class="log-item-meta">${item.qty === 1 ? '' : item.qty + ' × '}${item.serving}</div>
+          </div>
+          <div class="log-item-fiber">${item.fiber}g</div>
+          <button class="log-remove-btn" onclick="removeFood(${i})" title="Remove">×</button>
+        `;
+        card.insertBefore(div, suppSection);
+      });
+    }
+
+    function removeFood(i) {
+      log.splice(i, 1);
+      renderLog();
+      updateProgress();
+    }
+
+    function clearLog() {
+      log = [];
+      Object.keys(supps).forEach(k => {
+        supps[k].doses = 0;
+        document.getElementById(`${k}-count`).textContent = '0';
+        document.getElementById(`${k}-fiber`).textContent = '—';
+      });
+      renderLog();
+      updateProgress();
+    }
+
+    // ── Supplements ──
+    function changeSupp(key, delta) {
+      supps[key].doses = Math.max(0, supps[key].doses + delta);
+      const doses = supps[key].doses;
+      const total = Math.round(doses * supps[key].fiberPerDose * 10) / 10;
+      document.getElementById(`${key}-count`).textContent = doses;
+      document.getElementById(`${key}-fiber`).textContent = doses > 0 ? `+${total}g` : '—';
+      updateProgress();
+    }
+
+    // ── Progress ──
+    function updateProgress() {
+      const foodTotal = log.reduce((sum, item) => sum + item.fiber, 0);
+      const suppTotal = Object.values(supps).reduce((sum, s) => sum + s.doses * s.fiberPerDose, 0);
+      const total = Math.round((foodTotal + suppTotal) * 10) / 10;
+
+      document.getElementById('total-display').innerHTML = `${total}<span>g fiber</span>`;
+
+      const fill = document.getElementById('progress-fill');
+      const status = document.getElementById('progress-status');
+
+      if (!target) {
+        fill.style.width = '0%';
+        status.textContent = '';
+        status.className = 'progress-status';
+        return;
+      }
+
+      const pct = Math.min((total / target) * 100, 100);
+      fill.style.width = pct + '%';
+
+      fill.className = 'progress-bar-fill';
+      status.className = 'progress-status';
+
+      const remaining = Math.round((target - total) * 10) / 10;
+
+      if (total === 0) {
+        status.textContent = '';
+      } else if (total >= target) {
+        fill.classList.add('at-goal');
+        status.classList.add('met');
+        const over = Math.round((total - target) * 10) / 10;
+        status.textContent = over > 0 ? `Goal reached — ${over}g over target` : 'Daily goal reached.';
+      } else {
+        status.textContent = `${remaining}g to go`;
+      }
+    }
+
+    // ── Init ──
+    // Set today's date
+    const dateStr = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    document.getElementById('today-date').textContent = dateStr;
+
+    // ── Copy log ──
+    function copyLog() {
+      const foodTotal = log.reduce((sum, item) => sum + item.fiber, 0);
+      const suppTotal = Object.values(supps).reduce((sum, s) => sum + s.doses * s.fiberPerDose, 0);
+      const total = Math.round((foodTotal + suppTotal) * 10) / 10;
+
+      const goalMet = target && total >= target;
+      const deficiency = target ? Math.round((target - total) * 10) / 10 : null;
+      const sexLabel = sex === 'female' ? 'Female' : sex === 'male' ? 'Male' : '';
+      const ageLabel = ageGroup === '18-30' ? '18–30' : ageGroup === '31-50' ? '31–50' : ageGroup === '51+' ? '51+' : '';
+      const profileNote = (sexLabel && ageLabel) ? ` (${sexLabel}, ${ageLabel})` : '';
+
+      let goalLine = '';
+      if (!target) {
+        goalLine = 'Fiber goal: not set';
+      } else if (goalMet) {
+        goalLine = `Fiber goal: reached${profileNote} (${target}g target)`;
+      } else {
+        goalLine = `Fiber goal: not reached${profileNote} (${deficiency}g below ${target}g target)`;
+      }
+
+      const foodLines = log.length > 0
+        ? log.map(item => {
+            const qty = item.qty !== 1 ? `${item.qty} × ` : '';
+            return `  • ${item.name} — ${qty}${item.serving} — ${item.fiber}g`;
+          }).join('\n')
+        : '  (no foods logged)';
+
+      const suppLines = Object.entries(supps)
+        .filter(([, s]) => s.doses > 0)
+        .map(([key, s]) => {
+          const names = { psyllium: 'Psyllium husk (e.g. Metamucil)', citrucel: 'Methylcellulose (e.g. Citrucel)', benefiber: 'Wheat dextrin (e.g. Benefiber)' };
+          const fiber = Math.round(s.doses * s.fiberPerDose * 10) / 10;
+          return `  • ${names[key]} — ${s.doses} dose${s.doses > 1 ? 's' : ''} — ${fiber}g`;
+        }).join('\n');
+
+      const text = [
+        `${dateStr}`,
+        ``,
+        `Total fiber: ${total}g`,
+        goalLine,
+        ``,
+        `Foods:`,
+        foodLines,
+        suppLines ? `\nSupplements:\n${suppLines}` : '',
+      ].filter(l => l !== undefined).join('\n').trim();
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:-1px;margin-right:5px;"><path d="M2 7L5 10L11 3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Copied!`;
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:-1px;margin-right:5px;"><rect x="4" y="4" width="8" height="8" rx="1.2" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M9 4V2.2A1.2 1.2 0 0 0 7.8 1H2.2A1.2 1.2 0 0 0 1 2.2V7.8A1.2 1.2 0 0 0 2.2 9H4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Copy log to clipboard`;
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        alert('Could not copy — please copy manually:\n\n' + text);
+      });
+    }
+
+    renderResults();
+  </script>
+</body>
+</html>
